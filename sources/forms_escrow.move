@@ -19,7 +19,7 @@ module forms_escrow::forms_escrow {
         end_date: u64,
         name: String,
         status: u64,
-        wallet_address: String,
+        wallet_address: address,
         funds_to_distribute:  Balance<SUI>,
     }
 
@@ -31,7 +31,7 @@ module forms_escrow::forms_escrow {
         end_date: u64,
         name: vector<u8>,
         status: u64,
-        wallet_address: vector<u8>,
+        wallet_address: address,
         ctx: &mut TxContext,
     ) {
         let uid = object::new(ctx);
@@ -46,7 +46,7 @@ module forms_escrow::forms_escrow {
             end_date,
             name: string::utf8(name),
             status,
-            wallet_address: string::utf8(wallet_address),
+            wallet_address,
             funds_to_distribute: pay,
         };
 
@@ -61,7 +61,8 @@ module forms_escrow::forms_escrow {
         if(balance >= form.cost_per_respose){
             let amount = coin::take(&mut form.funds_to_distribute, form.cost_per_respose, ctx);
             transfer::public_transfer(amount, sender_address);
-        }else{
+        }
+        else{
             form.status = 2;
             form.end_date = date;
         }   
